@@ -6,16 +6,17 @@
 //
 
 import Foundation
+import LoopAlgorithm
 import HealthKit
 import NightscoutKit
 
 extension CarbCorrectionNightscoutTreatment {
-    func graphItem(egvValues: [GraphItem], displayUnit: HKUnit) -> GraphItem {
+    func graphItem(egvValues: [GraphItem], displayUnit: LoopUnit) -> GraphItem {
         let relativeEgvValue = interpolateEGVValue(egvs: egvValues, atDate: timestamp)
         return GraphItem(
             type: .carb(self.carbs),
             displayTime: timestamp,
-            quantity: HKQuantity(unit: displayUnit, doubleValue: relativeEgvValue),
+            quantity: LoopQuantity(unit: displayUnit, doubleValue: relativeEgvValue),
             displayUnit: displayUnit,
             graphItemState: .success
         )

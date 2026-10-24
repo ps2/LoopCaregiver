@@ -8,6 +8,7 @@
 import Foundation
 import HealthKit
 import LoopKit
+import LoopAlgorithm
 import NightscoutKit
 
 public extension GlucoseEntry {
@@ -21,7 +22,7 @@ public extension GlucoseEntry {
 
         return NewGlucoseSample(
             date: startDate,
-            quantity: HKQuantity(unit: .milligramsPerDeciliter, doubleValue: glucose),
+            quantity: LoopQuantity(unit: .milligramsPerDeciliter, doubleValue: glucose),
             condition: nil,
             trend: glucoseTrend,
             trendRate: trendRate,
@@ -34,7 +35,7 @@ public extension GlucoseEntry {
 
 extension GlucoseEntry: GlucoseValue {
     public var startDate: Date { date }
-    public var quantity: HKQuantity { .init(unit: .milligramsPerDeciliter, doubleValue: glucose) }
+    public var quantity: LoopQuantity { .init(unit: .milligramsPerDeciliter, doubleValue: glucose) }
 }
 
 extension GlucoseEntry: GlucoseDisplayable {
@@ -56,11 +57,11 @@ extension GlucoseEntry: GlucoseDisplayable {
         return nil
     }
 
-    public var trendRate: HKQuantity? {
+    public var trendRate: LoopQuantity? {
         guard let changeRate else {
             return nil
         }
 
-        return HKQuantity(unit: .milligramsPerDeciliterPerMinute, doubleValue: changeRate)
+        return LoopQuantity(unit: .milligramsPerDeciliterPerMinute, doubleValue: changeRate)
     }
 }

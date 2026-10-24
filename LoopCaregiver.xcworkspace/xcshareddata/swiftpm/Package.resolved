@@ -14,26 +14,35 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/twostraws/CodeScanner",
       "state" : {
-        "revision" : "944a6a1ca030dbd890e647a678e718fc2115d35c",
-        "version" : "2.4.1"
+        "revision" : "5e886430238944c7200fc9e10dbf2d9550dba865",
+        "version" : "2.5.2"
+      }
+    },
+    {
+      "identity" : "loopalgorithm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LoopKit/LoopAlgorithm.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "7ef67243adb0445f5138083c30908a4745eafc83"
       }
     },
     {
       "identity" : "loopkit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LoopKit/LoopKit.git",
+      "location" : "https://github.com/ps2/LoopKit.git",
       "state" : {
-        "branch" : "dev",
-        "revision" : "2f535b3ca46825e82e0dd1b5ef9daccd53a3f0ca"
+        "branch" : "loopcare",
+        "revision" : "ee9360a743fb853351d4814eb68bb56cba73c2a5"
       }
     },
     {
       "identity" : "nightscoutkit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/gestrich/NightscoutKit.git",
+      "location" : "https://github.com/ps2/NightscoutKit.git",
       "state" : {
-        "branch" : "feature/2023-07/bg/remote-commands",
-        "revision" : "d63fb7370522f0dd441cd790aa960e991e118cda"
+        "branch" : "loopcare",
+        "revision" : "83d20e179a62d66c8f0b0c3f8ccd07775a7b0209"
       }
     },
     {
@@ -42,7 +51,7 @@
       "location" : "https://github.com/mattrubin/OneTimePassword.git",
       "state" : {
         "branch" : "develop",
-        "revision" : "66f284e22c170ffcc2c9dcf055a1efeb260c766d"
+        "revision" : "d78a48c5a5ed675877ff0b8e2df0d2e3f87cae24"
       }
     },
     {

@@ -10,6 +10,7 @@ import HealthKit
 import LoopCaregiverKit
 import LoopCaregiverKitUI
 import LoopKit
+import LoopAlgorithm
 import SwiftUI
 
 struct HUDView: View {
@@ -108,7 +109,7 @@ struct HUDView: View {
 }
 
 class HUDViewModel: ObservableObject {
-    @Published var glucoseDisplayUnits: HKUnit
+    @Published var glucoseDisplayUnits: LoopUnit
     /*
      TODO: This property both reflects
      the selectedLooper of the AccountServiceManager

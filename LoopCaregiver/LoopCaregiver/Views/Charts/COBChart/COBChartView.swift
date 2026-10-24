@@ -6,6 +6,7 @@
 //
 
 import HealthKit
+import LoopAlgorithm
 import LoopCaregiverKit
 import LoopKit
 import LoopKitUI

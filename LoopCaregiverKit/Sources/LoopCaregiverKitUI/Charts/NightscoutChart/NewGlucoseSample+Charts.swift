@@ -8,6 +8,7 @@
 import Foundation
 import HealthKit
 import LoopKit
+import LoopAlgorithm
 
 // Loop Charts
 extension NewGlucoseSample: GlucoseValue {
@@ -18,7 +19,7 @@ extension NewGlucoseSample: GlucoseValue {
 
 // Nightscout Graph
 extension NewGlucoseSample {
-    func graphItem(displayUnit: HKUnit) -> GraphItem {
+    func graphItem(displayUnit: LoopUnit) -> GraphItem {
         return GraphItem(
             type: .egv,
             displayTime: date,
@@ -28,7 +29,7 @@ extension NewGlucoseSample {
         )
     }
 
-    func predictedBGGraphItem(displayUnit: HKUnit) -> GraphItem {
+    func predictedBGGraphItem(displayUnit: LoopUnit) -> GraphItem {
         return GraphItem(
             type: .predictedBG,
             displayTime: date,

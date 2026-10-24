@@ -8,6 +8,7 @@
 import HealthKit
 import LoopCaregiverKit
 import LoopKit
+import LoopAlgorithm
 import LoopKitUI
 import SwiftUI
 
@@ -56,7 +57,8 @@ struct DoseChartView: UIViewRepresentable {
                 type: .bolus,
                 startDate: $0.timestamp,
                 value: $0.amount,
-                unit: .units
+                unit: .units,
+                decisionId: nil
             )
         })
     }
@@ -89,6 +91,7 @@ struct DoseChartView: UIViewRepresentable {
                 endDate: endDate,
                 value: basalEntry.rate,
                 unit: .unitsPerHour,
+                decisionId: nil,
                 scheduledBasalRate: scheduledBasalRate(date: basalEntry.timestamp)
             )
             basalDoseEntries.append(doseEntry)
@@ -101,11 +104,11 @@ struct DoseChartView: UIViewRepresentable {
         return basalDoseEntries
     }
 
-    func scheduledBasalRate(date: Date) -> HKQuantity? {
+    func scheduledBasalRate(date: Date) -> LoopQuantity? {
         guard let scheduledBasalRatePeriod = getBasalRatePeriods().first(where: { $0.includesDate(date) }) else {
             return nil
         }
-        return HKQuantity(unit: .internationalUnitsPerHour, doubleValue: scheduledBasalRatePeriod.rate)
+        return LoopQuantity(unit: .internationalUnitsPerHour, doubleValue: scheduledBasalRatePeriod.rate)
     }
 
     func getBasalRatePeriods() -> [BasalRatePeriod] {

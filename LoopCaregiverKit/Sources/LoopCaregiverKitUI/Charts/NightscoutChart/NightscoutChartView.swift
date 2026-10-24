@@ -10,6 +10,7 @@ import Foundation
 import HealthKit
 import LoopCaregiverKit
 import LoopKit
+import LoopAlgorithm
 import NightscoutKit
 import SwiftUI
 
@@ -67,20 +68,20 @@ public struct NightscoutChartViewModel: Equatable {
     }
     
     func chartYBase() -> Double {
-        return HKQuantity(unit: .milligramsPerDeciliter, doubleValue: 0).doubleValue(for: treatmentData.glucoseDisplayUnits)
+        return LoopQuantity(unit: .milligramsPerDeciliter, doubleValue: 0).doubleValue(for: treatmentData.glucoseDisplayUnits)
     }
     
     func chartYTop() -> Double {
         guard let maxGraphYValue = maxValueOfAllGraphItems() else {
-            return HKQuantity(unit: .milligramsPerDeciliter, doubleValue: 400).doubleValue(for: treatmentData.glucoseDisplayUnits)
+            return LoopQuantity(unit: .milligramsPerDeciliter, doubleValue: 400).doubleValue(for: treatmentData.glucoseDisplayUnits)
         }
         
         if maxGraphYValue >= 300 {
-            return HKQuantity(unit: .milligramsPerDeciliter, doubleValue: 400).doubleValue(for: treatmentData.glucoseDisplayUnits)
+            return LoopQuantity(unit: .milligramsPerDeciliter, doubleValue: 400).doubleValue(for: treatmentData.glucoseDisplayUnits)
         } else if maxGraphYValue >= 200 {
-            return HKQuantity(unit: .milligramsPerDeciliter, doubleValue: 300).doubleValue(for: treatmentData.glucoseDisplayUnits)
+            return LoopQuantity(unit: .milligramsPerDeciliter, doubleValue: 300).doubleValue(for: treatmentData.glucoseDisplayUnits)
         } else {
-            return HKQuantity(unit: .milligramsPerDeciliter, doubleValue: 200).doubleValue(for: treatmentData.glucoseDisplayUnits)
+            return LoopQuantity(unit: .milligramsPerDeciliter, doubleValue: 200).doubleValue(for: treatmentData.glucoseDisplayUnits)
         }
     }
     
@@ -179,7 +180,7 @@ public struct NightscoutChartViewModel: Equatable {
     }
     
     func getNormalizedTargetInUserUnits(target: LowHighTarget) -> (Double, Double) {
-        let minimumRange = HKQuantity(unit: .milligramsPerDeciliter, doubleValue: 20).doubleValue(for: treatmentData.glucoseDisplayUnits)
+        let minimumRange = LoopQuantity(unit: .milligramsPerDeciliter, doubleValue: 20).doubleValue(for: treatmentData.glucoseDisplayUnits)
         let lowTargetValue = target.highTargetValue.quantity.doubleValue(for: treatmentData.glucoseDisplayUnits)
         let highTargetValue = target.lowTargetValue.quantity.doubleValue(for: treatmentData.glucoseDisplayUnits)
         let targetRange = highTargetValue - lowTargetValue

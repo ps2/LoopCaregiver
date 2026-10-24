@@ -8,14 +8,15 @@
 import Foundation
 import HealthKit
 import LoopKit
+import LoopAlgorithm
 import SwiftUI
 
 public struct CurrentGlucoseComboView: View {
     let glucoseSample: NewGlucoseSample?
     let lastGlucoseChange: Double?
-    let displayUnits: HKUnit
+    let displayUnits: LoopUnit
     
-    public init(glucoseSample: NewGlucoseSample? = nil, lastGlucoseChange: Double? = nil, displayUnits: HKUnit) {
+    public init(glucoseSample: NewGlucoseSample? = nil, lastGlucoseChange: Double? = nil, displayUnits: LoopUnit) {
         self.glucoseSample = glucoseSample
         self.lastGlucoseChange = lastGlucoseChange
         self.displayUnits = displayUnits

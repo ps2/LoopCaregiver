@@ -7,11 +7,12 @@
 
 import HealthKit
 import LoopKit
+import LoopAlgorithm
 import NightscoutKit
 
 public struct CaregiverTreatmentData: Equatable {
     public let creationDate: Date
-    public let glucoseDisplayUnits: HKUnit
+    public let glucoseDisplayUnits: LoopUnit
     public let glucoseSamples: [NewGlucoseSample]
     public let predictedGlucose: [NewGlucoseSample]
     public let bolusEntries: [BolusNightscoutTreatment]
@@ -25,7 +26,7 @@ public struct CaregiverTreatmentData: Equatable {
     
     public init(
         creationDate: Date? = nil,
-        glucoseDisplayUnits: HKUnit,
+        glucoseDisplayUnits: LoopUnit,
         glucoseSamples: [NewGlucoseSample],
         predictedGlucose: [NewGlucoseSample],
         bolusEntries: [BolusNightscoutTreatment],

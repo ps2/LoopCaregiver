@@ -8,6 +8,7 @@
 import Foundation
 import HealthKit
 import LoopKit
+import LoopAlgorithm
 import NightscoutKit
 
 public class RemoteDataServiceManager: ObservableObject {
@@ -227,7 +228,7 @@ public class RemoteDataServiceManager: ObservableObject {
         let intervalBetweenPredictedValues = 60.0 * 5.0
         for value in predictedValues {
             let predictedSample = NewGlucoseSample(date: currDate,
-                                                   quantity: HKQuantity(unit: .milligramsPerDeciliter, doubleValue: Double(value)),
+                                                   quantity: LoopQuantity(unit: .milligramsPerDeciliter, doubleValue: Double(value)),
                                                    condition: nil,
                                                    trend: nil,
                                                    trendRate: nil,

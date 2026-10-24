@@ -8,6 +8,7 @@
 import HealthKit
 import NightscoutKit
 import SwiftUI
+import LoopAlgorithm
 
 public enum ColorType: Int, CaseIterable, Comparable {
     case gray
@@ -16,7 +17,7 @@ public enum ColorType: Int, CaseIterable, Comparable {
     case red
     case clear
 
-    public init(quantity: HKQuantity) {
+    public init(quantity: LoopQuantity) {
         let glucose = quantity.doubleValue(for: .milligramsPerDeciliter)
         switch glucose {
         case -Double.infinity..<55:

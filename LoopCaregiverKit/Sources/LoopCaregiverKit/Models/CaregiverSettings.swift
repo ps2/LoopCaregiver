@@ -7,6 +7,7 @@
 
 import Combine
 import Foundation
+import LoopAlgorithm
 import HealthKit
 import WidgetKit
 
@@ -294,7 +295,7 @@ public enum GlucoseUnitPrefererence: Int, Codable, CaseIterable {
         }
     }
 
-    public var unit: HKUnit {
+    public var unit: LoopUnit {
         switch self {
         case .milligramsPerDeciliter:
             return .milligramsPerDeciliter

@@ -6,11 +6,12 @@
 //
 
 import Foundation
+import LoopAlgorithm
 import HealthKit
 import LoopCaregiverKit
 
 extension RemoteCommand {
-    func graphItem(egvValues: [GraphItem], displayUnit: HKUnit) -> GraphItem? {
+    func graphItem(egvValues: [GraphItem], displayUnit: LoopUnit) -> GraphItem? {
         let treatmentDate = treatmentDate()
         let relativeEgvValue = interpolateEGVValue(egvs: egvValues, atDate: treatmentDate)
 
@@ -23,7 +24,7 @@ extension RemoteCommand {
                         bolusEntry.amountInUnits
                     ),
                     displayTime: treatmentDate,
-                    quantity: HKQuantity(unit: displayUnit, doubleValue: relativeEgvValue),
+                    quantity: LoopQuantity(unit: displayUnit, doubleValue: relativeEgvValue),
                     displayUnit: displayUnit,
                     graphItemState: toGraphItemState()
                 )
@@ -31,13 +32,13 @@ extension RemoteCommand {
                 return GraphItem(
                     type: .carb(Int(carbEntry.amountInGrams)),
                     displayTime: treatmentDate,
-                    quantity: HKQuantity(unit: displayUnit, doubleValue: relativeEgvValue),
+                    quantity: LoopQuantity(unit: displayUnit, doubleValue: relativeEgvValue),
                     displayUnit: displayUnit,
                     graphItemState: toGraphItemState()
                 )
             default:
                 return nil // Not graphing other types yet.
-                // return GraphItem(type: .command(self), displayTime: createdDate, quantity: HKQuantity(unit: displayUnit, doubleValue: relativeEgvValue), displayUnit: displayUnit, graphItemState: toGraphItemState())
+                // return GraphItem(type: .command(self), displayTime: createdDate, quantity: LoopQuantity(unit: displayUnit, doubleValue: relativeEgvValue), displayUnit: displayUnit, graphItemState: toGraphItemState())
             }
         default:
             return nil

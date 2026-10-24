@@ -9,6 +9,7 @@ import Foundation
 import HealthKit
 import LoopCaregiverKit
 import LoopKit
+import LoopAlgorithm
 import NightscoutKit
 import SwiftUI
 
@@ -17,7 +18,7 @@ public struct WidgetViewModel {
     public let timelineEntryDate: Date
     public let latestGlucose: NewGlucoseSample
     public let lastGlucoseChange: Double?
-    public let glucoseDisplayUnits: HKUnit
+    public let glucoseDisplayUnits: LoopUnit
     public let currentProfile: ProfileSet?
     public let recentGlucoseValues: [NewGlucoseSample]
     public let treatmentData: CaregiverTreatmentData
@@ -163,7 +164,7 @@ public struct WidgetViewModel {
     }
     
     func getNormalizedTargetInUserUnits(target: LowHighTarget) -> (Double, Double) {
-        let minimumRange = HKQuantity(unit: .milligramsPerDeciliter, doubleValue: 20).doubleValue(for: glucoseDisplayUnits)
+        let minimumRange = LoopQuantity(unit: .milligramsPerDeciliter, doubleValue: 20).doubleValue(for: glucoseDisplayUnits)
         let lowTargetValue = target.highTargetValue.quantity.doubleValue(for: glucoseDisplayUnits)
         let highTargetValue = target.lowTargetValue.quantity.doubleValue(for: glucoseDisplayUnits)
         let targetRange = highTargetValue - lowTargetValue
@@ -193,7 +194,7 @@ public struct WidgetViewModel {
 }
 
 extension ProfileSet.ScheduleItem {
-    var quantity: HKQuantity {
-        return HKQuantity(unit: .milligramsPerDeciliter, doubleValue: value)
+    var quantity: LoopQuantity {
+        return LoopQuantity(unit: .milligramsPerDeciliter, doubleValue: value)
     }
 }

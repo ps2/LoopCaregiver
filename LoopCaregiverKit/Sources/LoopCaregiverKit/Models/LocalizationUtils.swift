@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import LoopAlgorithm
 import HealthKit
 
 public struct LocalizationUtils {
@@ -13,7 +14,7 @@ public struct LocalizationUtils {
         return localizedNumberString(input: amount, maxFractionalDigits: 2)
     }
 
-    public static func presentableStringFromGlucoseAmount(_ amount: Double, displayUnits: HKUnit) -> String {
+    public static func presentableStringFromGlucoseAmount(_ amount: Double, displayUnits: LoopUnit) -> String {
         var minFractionalDigits = 0
         var maxFractionalDigits = 0
         if displayUnits == .millimolesPerLiter {

@@ -8,13 +8,14 @@
 import Foundation
 import HealthKit
 import LoopKit
+import LoopAlgorithm
 
 public extension NewGlucoseSample {
-    func presentableUserValue(displayUnits: HKUnit) -> Double {
+    func presentableUserValue(displayUnits: LoopUnit) -> Double {
         return quantity.doubleValue(for: displayUnits)
     }
 
-    func presentableStringValue(displayUnits: HKUnit, includeShortUnits: Bool) -> String {
+    func presentableStringValue(displayUnits: LoopUnit, includeShortUnits: Bool) -> String {
         let unitInUserUnits = quantity.doubleValue(for: displayUnits)
         var result = LocalizationUtils.presentableStringFromGlucoseAmount(unitInUserUnits, displayUnits: displayUnits)
         if includeShortUnits {
@@ -25,7 +26,7 @@ public extension NewGlucoseSample {
 }
 
 public extension [NewGlucoseSample] {
-    func getLastGlucoseChange(displayUnits: HKUnit) -> Double? {
+    func getLastGlucoseChange(displayUnits: LoopUnit) -> Double? {
         guard count > 1 else {
             return nil
         }

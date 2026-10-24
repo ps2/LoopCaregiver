@@ -6,14 +6,15 @@
 //
 
 import Foundation
+import LoopAlgorithm
 import HealthKit
 
 struct GraphItem: Identifiable, Equatable {
     var id = UUID()
     var type: GraphItemType
     var displayTime: Date
-    var displayUnit: HKUnit
-    var quantity: HKQuantity
+    var displayUnit: LoopUnit
+    var quantity: LoopQuantity
     let graphItemState: GraphItemState
 
     var value: Double {
@@ -24,7 +25,7 @@ struct GraphItem: Identifiable, Equatable {
         return ColorType(quantity: quantity)
     }
 
-    init(type: GraphItemType, displayTime: Date, quantity: HKQuantity, displayUnit: HKUnit, graphItemState: GraphItemState) {
+    init(type: GraphItemType, displayTime: Date, quantity: LoopQuantity, displayUnit: LoopUnit, graphItemState: GraphItemState) {
         self.type = type
         self.displayTime = displayTime
         self.displayUnit = displayUnit
