@@ -20,7 +20,15 @@ public class LoopCareDataSource: RemoteDataServiceProvider {
         self.settings = settings
     }
 
-    public func checkAuth() async throws { throw LoopCareDataSourceError.notConnected }
+    /// Whether Loop has confirmed this caregiver: until then, the circle refuses their requests.
+    public func checkAuth() async throws {
+        let client = LoopCareClient(key: try CaregiverKeyStore.loadOrCreate())
+        do {
+            _ = try await client.request(base: credentials.siteURL, method: "GET", path: "/v1/circles/\(credentials.circle)/circle")
+        } catch LoopCareClientError.badResponse(let status, _) where status == 401 || status == 403 {
+            throw LoopCareDataSourceError.awaitingConfirmation
+        }
+    }
     public func fetchGlucoseSamples() async throws -> [NewGlucoseSample] { throw LoopCareDataSourceError.notConnected }
     public func fetchRecentGlucoseSamples() async throws -> [NewGlucoseSample] { throw LoopCareDataSourceError.notConnected }
     public func fetchBolusEntries() async throws -> [BolusNightscoutTreatment] { throw LoopCareDataSourceError.notConnected }
@@ -42,11 +50,13 @@ public class LoopCareDataSource: RemoteDataServiceProvider {
 public enum LoopCareDataSourceError: LocalizedError {
     case notConnected
     case notSupported
+    case awaitingConfirmation
 
     public var errorDescription: String? {
         switch self {
         case .notConnected: return "LoopCare isn't available in this version yet."
         case .notSupported: return "LoopCare doesn't support this."
+        case .awaitingConfirmation: return "Waiting for Loop to confirm you. Ask them to open LoopCare in Loop's settings."
         }
     }
 }

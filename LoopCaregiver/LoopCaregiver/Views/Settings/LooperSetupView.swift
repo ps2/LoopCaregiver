@@ -22,8 +22,33 @@ struct LooperSetupView: View {
     @State private var isShowingScanner = false
     @State private var authenticating = false
     @Binding var path: NavigationPath
+    @State private var kind: Kind = .loopCare
+
+    /// How the Looper is followed: LoopCare (an invitation from Loop) or their Nightscout site.
+    enum Kind: String, CaseIterable, Identifiable {
+        case loopCare = "LoopCare"
+        case nightscout = "Nightscout"
+        var id: String { rawValue }
+    }
 
     var body: some View {
+        VStack(spacing: 0) {
+            Picker("Follow with", selection: $kind) {
+                ForEach(Kind.allCases) { Text($0.rawValue).tag($0) }
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal)
+            switch kind {
+            case .loopCare:
+                LoopCareJoinView(accountService: accountService, path: $path)
+            case .nightscout:
+                nightscoutSetupView
+            }
+        }
+        .navigationTitle("Add Looper")
+    }
+
+    private var nightscoutSetupView: some View {
         VStack {
             inputFormView
             if authenticating {
@@ -44,7 +69,6 @@ struct LooperSetupView: View {
         .sheet(isPresented: $isShowingScanner) {
             CodeScannerView(codeTypes: [.qr], simulatedData: simulatedOTP(), completion: handleScan)
         }
-        .navigationTitle("Add Looper")
         .onAppear(perform: {
             if let simCredentials = accountService.simulatorCredentials() {
                 nightscoutURLFieldText = simCredentials.url.absoluteString
