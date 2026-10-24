@@ -16,7 +16,8 @@ import WidgetKit
 struct SettingsView: View {
     @ObservedObject var settingsViewModel: SettingsViewModel
     @ObservedObject var looperService: LooperService
-    @ObservedObject var nightscoutCredentialService: NightscoutCredentialService
+    /// For a Nightscout Looper: its site and Loop's one-time password.
+    let nightscoutCredentialService: NightscoutCredentialService?
     @ObservedObject var accountService: AccountServiceManager
     @ObservedObject var settings: CaregiverSettings
     @ObservedObject var watchService: WatchService
@@ -43,9 +44,9 @@ struct SettingsView: View {
             settings: settings
         )
         self.looperService = looperService
-        self.nightscoutCredentialService = NightscoutCredentialService(
-            credentials: looperService.looper.nightscoutCredentials
-        )
+        self.nightscoutCredentialService = looperService.looper.nightscoutCredentials.map {
+            NightscoutCredentialService(credentials: $0)
+        }
         self.accountService = accountService
         self.settings = settings
         self.watchService = watchService
@@ -129,15 +130,19 @@ struct SettingsView: View {
                 }
             }
             .pickerStyle(.automatic)
-            LabeledContent {
-                Text(loopURL)
-            } label: {
-                Text("Nightscout")
-            }
-            LabeledContent {
-                Text(nightscoutCredentialService.otpCode)
-            } label: {
-                Text("OTP")
+            if let nightscoutCredentialService {
+                LabeledContent {
+                    Text(loopURL)
+                } label: {
+                    Text("Nightscout")
+                }
+                OTPCodeRow(credentialService: nightscoutCredentialService)
+            } else if let loopCare = looperService.looper.loopCareCredentials {
+                LabeledContent {
+                    Text(settings.demoModeEnabled ? "https://www.YourLoopersURL.com" : loopCare.siteURL.absoluteString)
+                } label: {
+                    Text("LoopCare")
+                }
             }
             Button(role: .destructive) {
                 isPresentingConfirm = true
@@ -155,7 +160,7 @@ struct SettingsView: View {
         if settings.demoModeEnabled {
             return "https://www.YourLoopersURL.com"
         } else {
-            return nightscoutCredentialService.credentials.url.absoluteString
+            return nightscoutCredentialService?.credentials.url.absoluteString ?? ""
         }
     }
 
@@ -565,3 +570,16 @@ struct CommandStatusView: View {
     }
 }
 // swiftlint:enable file_length
+
+/// Loop's current one-time password, kept up to date as it changes.
+private struct OTPCodeRow: View {
+    @ObservedObject var credentialService: NightscoutCredentialService
+
+    var body: some View {
+        LabeledContent {
+            Text(credentialService.otpCode)
+        } label: {
+            Text("OTP")
+        }
+    }
+}

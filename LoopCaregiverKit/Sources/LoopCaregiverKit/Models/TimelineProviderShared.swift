@@ -75,8 +75,7 @@ public struct TimelineProviderShared {
 
     @MainActor
     private func getTimeLineValue(composer: ServiceComposer, looper: Looper) async throws -> GlucoseTimelineValue {
-        let nightscoutDataSource = NightscoutDataSource(looper: looper, settings: composer.settings)
-        let remoteServiceManager = RemoteDataServiceManager(remoteDataProvider: nightscoutDataSource)
+        let remoteServiceManager = RemoteDataServiceManager(remoteDataProvider: looper.makeRemoteDataSource(settings: composer.settings))
         await remoteServiceManager.updateData()
         let sortedSamples = remoteServiceManager.glucoseSamples
         guard let latestGlucoseSample = sortedSamples.last else {

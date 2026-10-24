@@ -29,9 +29,16 @@ class CoreDataAccountService: AccountService {
         let looperCD = LooperCD(context: context)
         looperCD.identifier = looper.identifier
         looperCD.name = looper.name
-        looperCD.nightscoutURL = looper.nightscoutCredentials.url.absoluteString
-        looperCD.nightscoutAPISecret = looper.nightscoutCredentials.secretKey
-        looperCD.otpURL = looper.nightscoutCredentials.otpURL
+        switch looper.backend {
+        case .nightscout(let credentials):
+            looperCD.nightscoutURL = credentials.url.absoluteString
+            looperCD.nightscoutAPISecret = credentials.secretKey
+            looperCD.otpURL = credentials.otpURL
+        case .loopCare(let credentials):
+            looperCD.loopCareSiteURL = credentials.siteURL.absoluteString
+            looperCD.loopCareCircle = credentials.circle
+            looperCD.loopCareKeyID = credentials.keyID
+        }
         looperCD.lastSelectedDate = looper.lastSelectedDate
         try context.save()
     }
@@ -249,12 +256,17 @@ class AppGroupPersisentContainerFactory: PersistentContainerFactory {
 
 extension LooperCD {
     func toLooper() -> Looper? {
-        guard let identifier,
-              let name,
-              let nightscoutURL,
+        guard let identifier, let name, let lastSelectedDate else {
+            return nil
+        }
+        // A LoopCare Looper (model version 3 on); every Looper before then is a Nightscout one.
+        if let loopCareSiteURL, let siteURL = URL(string: loopCareSiteURL), let loopCareCircle, let loopCareKeyID {
+            let credentials = LoopCareCredentials(siteURL: siteURL, circle: loopCareCircle, keyID: loopCareKeyID)
+            return Looper(identifier: identifier, name: name, backend: .loopCare(credentials), lastSelectedDate: lastSelectedDate)
+        }
+        guard let nightscoutURL,
               let nightscoutAPISecret,
-              let otpURL,
-              let lastSelectedDate
+              let otpURL
         else {
             return nil
         }

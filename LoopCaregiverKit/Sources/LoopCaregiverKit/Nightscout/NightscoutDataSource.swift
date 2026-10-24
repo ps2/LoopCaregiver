@@ -15,9 +15,9 @@ public class NightscoutDataSource: ObservableObject, RemoteDataServiceProvider {
     private let settings: CaregiverSettings
     private let treatmentsFetcher: NightscoutTreatmentFetcher
 
-    public init(looper: Looper, settings: CaregiverSettings) {
-        self.nightscoutUploader = NightscoutClient(siteURL: looper.nightscoutCredentials.url, apiSecret: looper.nightscoutCredentials.secretKey)
-        self.credentialService = NightscoutCredentialService(credentials: looper.nightscoutCredentials)
+    public init(credentials: NightscoutCredentials, settings: CaregiverSettings) {
+        self.nightscoutUploader = NightscoutClient(siteURL: credentials.url, apiSecret: credentials.secretKey)
+        self.credentialService = NightscoutCredentialService(credentials: credentials)
         self.settings = settings
         self.treatmentsFetcher = NightscoutTreatmentFetcher(nightscoutClient: self.nightscoutUploader,
                                                             fetchLookbackInterval: Self.fetchLookbackInterval(),

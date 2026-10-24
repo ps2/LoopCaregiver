@@ -212,7 +212,11 @@ public struct CreateLooperDeepLink: DeepLink {
     }
     
     public static func deepLinkWithLooper(_ looper: Looper) throws -> CreateLooperDeepLink {
-        return try CreateLooperDeepLink(name: looper.name, nsURL: looper.nightscoutCredentials.url, secretKey: looper.nightscoutCredentials.secretKey, otpURLString: looper.nightscoutCredentials.otpURL)
+        // The watch is set up with a Nightscout Looper's link; LoopCare Loopers don't reach the watch yet.
+        guard let credentials = looper.nightscoutCredentials else {
+            throw CreateLooperDeepLinkError.missingNSURL
+        }
+        return try CreateLooperDeepLink(name: looper.name, nsURL: credentials.url, secretKey: credentials.secretKey, otpURLString: credentials.otpURL)
     }
 
     enum CreateLooperDeepLinkError: LocalizedError, Equatable {

@@ -28,7 +28,7 @@ public class AccountServiceManager: ObservableObject, AccountServiceDelegate, Ac
             self.remoteServicesProviderFactory = remoteServicesProviderFactory
         } else {
             self.remoteServicesProviderFactory = { factoryLooper, factorySettings in
-                return NightscoutDataSource(looper: factoryLooper, settings: factorySettings)
+                return factoryLooper.makeRemoteDataSource(settings: factorySettings)
             }
         }
 
