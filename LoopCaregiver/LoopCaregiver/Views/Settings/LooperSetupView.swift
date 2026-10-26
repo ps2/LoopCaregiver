@@ -40,7 +40,9 @@ struct LooperSetupView: View {
             .padding(.horizontal)
             switch kind {
             case .loopCare:
-                LoopCareJoinView(accountService: accountService, path: $path)
+                LoopCareJoinView(accountService: accountService) {
+                    if !path.isEmpty { path.removeLast() }
+                }
             case .nightscout:
                 nightscoutSetupView
             }

@@ -38,6 +38,25 @@ final class LoopCareJoinTestCase: XCTestCase {
         XCTAssertNil(LoopCareInvitationLink("https://care.example.org/x/abcdefgh12345678#s"))
     }
 
+    func testJoinDeepLink() throws {
+        let text = "https://care.example.org/i/abcdefgh12345678#s3c/r+t="
+        let link = try XCTUnwrap(LoopCareInvitationLink(text))
+        let deepLink = JoinLoopCareDeepLink(invitationLink: link, linkText: text)
+        XCTAssertEqual(deepLink.url.scheme, "caregiver")
+        XCTAssertEqual(deepLink.url.host, "loopcare-join")
+
+        // What the invitation page's button opens: the whole link, secret included, comes through.
+        guard case .joinLoopCare(let parsed) = try DeepLinkParser().parseDeepLink(url: deepLink.url) else {
+            return XCTFail("not a join link")
+        }
+        XCTAssertEqual(parsed.invitationLink, link)
+        XCTAssertEqual(parsed.invitationLink.secret, "s3c/r+t=")
+        // Either form works where a link is pasted or scanned.
+        XCTAssertEqual(LoopCareInvitationLink(anyLink: deepLink.url.absoluteString), link)
+        XCTAssertEqual(LoopCareInvitationLink(anyLink: text), link)
+        XCTAssertThrowsError(try DeepLinkParser().parseDeepLink(url: URL(string: "caregiver://loopcare-join?link=nope")!))
+    }
+
     /// Open, accept, be confirmed by Loop, then read the circle as this caregiver.
     func testJoinAgainstADemoNode() async throws {
         guard let text = ProcessInfo.processInfo.environment["LOOPCARE_INVITE"], let link = LoopCareInvitationLink(text) else {

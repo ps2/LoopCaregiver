@@ -29,6 +29,9 @@ public class DeepLinkParser {
             } else if action == SelectLooperErrorDeepLink.actionName {
                 let deepLink = try SelectLooperErrorDeepLink(pathParts: pathComponents, queryParameters: queryParameters)
                 return .selectLooperError(deepLink: deepLink)
+            } else if action == JoinLoopCareDeepLink.actionName {
+                let deepLink = try JoinLoopCareDeepLink(pathParts: pathComponents, queryParameters: queryParameters)
+                return .joinLoopCare(deepLink: deepLink)
             } else if action == RequestWatchConfigurationDeepLink.actionName {
                 let deepLink = try RequestWatchConfigurationDeepLink(pathParts: pathComponents, queryParameters: queryParameters)
                 return .requestWatchConfigurationDeepLink(deepLink: deepLink)
@@ -71,6 +74,7 @@ public enum DeepLinkAction {
     case selectLooperError(deepLink: SelectLooperErrorDeepLink)
     case addLooper(deepLink: CreateLooperDeepLink)
     case requestWatchConfigurationDeepLink(deepLink: RequestWatchConfigurationDeepLink)
+    case joinLoopCare(deepLink: JoinLoopCareDeepLink)
 }
 
 public protocol DeepLink {

@@ -17,6 +17,8 @@ public class AccountServiceManager: ObservableObject, AccountServiceDelegate, Ac
     @Published public private(set) var selectedLooper: Looper?
     @Published public var selectedLooperService: LooperService?
     @Published public var settings: CaregiverSettings
+    /// An invitation Loop shared that opened the app, waiting for the caregiver to look at it.
+    @Published public var pendingLoopCareInvitation: LoopCareInvitationLink?
     private var accountService: AccountService
     private let remoteServicesProviderFactory: RemoteServicesProviderFactory
 

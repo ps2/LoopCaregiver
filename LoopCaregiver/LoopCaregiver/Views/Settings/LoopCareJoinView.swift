@@ -12,7 +12,10 @@ import SwiftUI
 
 struct LoopCareJoinView: View {
     @ObservedObject var accountService: AccountServiceManager
-    @Binding var path: NavigationPath
+    /// An invitation that opened the app; it's opened at once.
+    var initialLink: LoopCareInvitationLink?
+    /// After joining.
+    var onJoined: () -> Void
     @State private var linkText = ""
     @State private var invitation: LoopCareInvitation?
     @State private var nameText = ""
@@ -23,14 +26,28 @@ struct LoopCareJoinView: View {
     var body: some View {
         VStack {
             Form {
-                Section {
-                    TextField("https://…/i/…#…", text: $linkText)
-                        .autocapitalization(.none)
-                        .disableAutocorrection(true)
-                        .keyboardType(.URL)
-                        .submitLabel(.go)
-                        .onSubmit(open)
-                    HStack {
+                if let invitation {
+                    offerSection(invitation)
+                } else {
+                    Section {
+                        Button {
+                            isShowingScanner = true
+                        } label: {
+                            Label("Scan the Code from Loop", systemImage: "qrcode.viewfinder")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.large)
+                    } footer: {
+                        Text("Loop invites you: on the Looper's phone, Settings → Services → LoopCare → Invite. Scan the code it shows, or open the link it sends you.")
+                    }
+                    Section {
+                        TextField("https://…/i/…#…", text: $linkText)
+                            .autocapitalization(.none)
+                            .disableAutocorrection(true)
+                            .keyboardType(.URL)
+                            .submitLabel(.go)
+                            .onSubmit(open)
                         // Reads the clipboard only when tapped, so iOS doesn't ask for permission.
                         PasteButton(payloadType: String.self) { strings in
                             guard let text = strings.first else { return }
@@ -38,30 +55,22 @@ struct LoopCareJoinView: View {
                         }
                         .buttonBorderShape(.capsule)
                         .labelStyle(.titleOnly)
-                        Spacer()
-                        Button("Scan QR") { isShowingScanner = true }
-                            .buttonStyle(.bordered)
+                    } header: {
+                        Text("Or the invitation link")
                     }
-                } header: {
-                    Text("Invitation link")
-                } footer: {
-                    Text("The link Loop shared with you from Settings → Services → LoopCare.")
-                }
-                if let invitation {
-                    offerSection(invitation)
                 }
             }
             if working {
                 ProgressView()
             }
             Spacer()
-            Button(invitation == nil ? "Open Invitation" : "Join") {
-                invitation == nil ? open() : join()
+            if invitation != nil {
+                Button("Join") { join() }
+                    .buttonStyle(.borderedProminent)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .disabled(working || nameText.isEmpty)
             }
-            .buttonStyle(.borderedProminent)
-            .frame(maxWidth: .infinity)
-            .padding()
-            .disabled(working || linkText.isEmpty || (invitation != nil && nameText.isEmpty))
             if let errorText {
                 Text(errorText).foregroundColor(.red).padding(.horizontal)
             }
@@ -73,7 +82,13 @@ struct LoopCareJoinView: View {
             }
         }
         .onChange(of: linkText) { _ in
-            if invitation != nil && invitation?.link != LoopCareInvitationLink(linkText) { invitation = nil }
+            if invitation != nil && invitation?.link != LoopCareInvitationLink(anyLink: linkText) { invitation = nil }
+        }
+        .onAppear {
+            if let initialLink, linkText.isEmpty {
+                linkText = initialLink.text
+                open()
+            }
         }
     }
 
@@ -98,7 +113,7 @@ struct LoopCareJoinView: View {
     }
 
     private func open() {
-        guard let link = LoopCareInvitationLink(linkText) else {
+        guard let link = LoopCareInvitationLink(anyLink: linkText) else {
             errorText = LoopCareClientError.invalidLink.localizedDescription
             return
         }
@@ -113,7 +128,7 @@ struct LoopCareJoinView: View {
         guard let invitation else { return }
         run {
             _ = try await accountService.join(invitation, name: nameText.trimmingCharacters(in: .whitespacesAndNewlines))
-            if !path.isEmpty { path.removeLast() }
+            onJoined()
         }
     }
 

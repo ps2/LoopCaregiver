@@ -10,7 +10,8 @@
 import Foundation
 
 /// An invitation link from Loop: https://<site>/i/<inviteID>#<secret>. The secret after # never reaches the site.
-public struct LoopCareInvitationLink: Equatable {
+public struct LoopCareInvitationLink: Equatable, Identifiable {
+    public var id: String { inviteID }
     public let siteURL: URL
     public let inviteID: String
     public let secret: String
