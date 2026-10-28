@@ -1,22 +1,22 @@
 //
-//  LoopCareJSON.swift
-//  LoopCaregiverKit (from LoopCareService)
+//  LoopSightJSON.swift
+//  LoopCaregiverKit (from LoopSightService)
 //
 //  A JSON value, and its canonical form: keys sorted (by UTF-16 code units),
 //  no whitespace, numbers and strings written exactly as JavaScript's
-//  JSON.stringify writes them. LoopCare signs canonical JSON, so this must
-//  match the server byte for byte (LoopCare tools/test-vectors.js).
+//  JSON.stringify writes them. LoopSight signs canonical JSON, so this must
+//  match the server byte for byte (LoopSight tools/test-vectors.js).
 //
 
 import Foundation
 
-public enum LoopCareJSON: Equatable {
+public enum LoopSightJSON: Equatable {
     case string(String)
     case number(Double)
     case bool(Bool)
     case null
-    case array([LoopCareJSON])
-    case object([String: LoopCareJSON])
+    case array([LoopSightJSON])
+    case object([String: LoopSightJSON])
 
     public var canonical: String {
         var out = ""
@@ -28,8 +28,8 @@ public enum LoopCareJSON: Equatable {
 
     private func write(into out: inout String) {
         switch self {
-        case .string(let s): LoopCareJSON.writeString(s, into: &out)
-        case .number(let n): out += LoopCareJSON.format(n)
+        case .string(let s): LoopSightJSON.writeString(s, into: &out)
+        case .number(let n): out += LoopSightJSON.format(n)
         case .bool(let b): out += b ? "true" : "false"
         case .null: out += "null"
         case .array(let items):
@@ -44,7 +44,7 @@ public enum LoopCareJSON: Equatable {
             let keys = members.keys.sorted { $0.utf16.lexicographicallyPrecedes($1.utf16) }
             for (i, key) in keys.enumerated() {
                 if i > 0 { out += "," }
-                LoopCareJSON.writeString(key, into: &out)
+                LoopSightJSON.writeString(key, into: &out)
                 out += ":"
                 members[key]!.write(into: &out)
             }
@@ -117,40 +117,40 @@ public enum LoopCareJSON: Equatable {
     }
 }
 
-extension LoopCareJSON: ExpressibleByStringLiteral, ExpressibleByIntegerLiteral, ExpressibleByFloatLiteral, ExpressibleByBooleanLiteral, ExpressibleByArrayLiteral, ExpressibleByDictionaryLiteral, ExpressibleByNilLiteral {
+extension LoopSightJSON: ExpressibleByStringLiteral, ExpressibleByIntegerLiteral, ExpressibleByFloatLiteral, ExpressibleByBooleanLiteral, ExpressibleByArrayLiteral, ExpressibleByDictionaryLiteral, ExpressibleByNilLiteral {
     public init(stringLiteral value: String) { self = .string(value) }
     public init(integerLiteral value: Int) { self = .number(Double(value)) }
     public init(floatLiteral value: Double) { self = .number(value) }
     public init(booleanLiteral value: Bool) { self = .bool(value) }
-    public init(arrayLiteral elements: LoopCareJSON...) { self = .array(elements) }
-    public init(dictionaryLiteral elements: (String, LoopCareJSON)...) { self = .object(Dictionary(elements, uniquingKeysWith: { $1 })) }
+    public init(arrayLiteral elements: LoopSightJSON...) { self = .array(elements) }
+    public init(dictionaryLiteral elements: (String, LoopSightJSON)...) { self = .object(Dictionary(elements, uniquingKeysWith: { $1 })) }
     public init(nilLiteral: ()) { self = .null }
 }
 
-public extension LoopCareJSON {
+public extension LoopSightJSON {
     /// From JSONSerialization's output (for reading the server's responses).
     init(any: Any) {
         switch any {
         case let s as String: self = .string(s)
         case let n as NSNumber:
             self = CFGetTypeID(n) == CFBooleanGetTypeID() ? .bool(n.boolValue) : .number(n.doubleValue)
-        case let a as [Any]: self = .array(a.map(LoopCareJSON.init(any:)))
-        case let o as [String: Any]: self = .object(o.mapValues(LoopCareJSON.init(any:)))
+        case let a as [Any]: self = .array(a.map(LoopSightJSON.init(any:)))
+        case let o as [String: Any]: self = .object(o.mapValues(LoopSightJSON.init(any:)))
         default: self = .null
         }
     }
 
-    static func parse(_ data: Data) throws -> LoopCareJSON {
-        LoopCareJSON(any: try JSONSerialization.jsonObject(with: data, options: [.fragmentsAllowed]))
+    static func parse(_ data: Data) throws -> LoopSightJSON {
+        LoopSightJSON(any: try JSONSerialization.jsonObject(with: data, options: [.fragmentsAllowed]))
     }
 
-    subscript(key: String) -> LoopCareJSON? {
+    subscript(key: String) -> LoopSightJSON? {
         if case .object(let o) = self { return o[key] }
         return nil
     }
 
     var stringValue: String? { if case .string(let s) = self { return s }; return nil }
     var doubleValue: Double? { if case .number(let n) = self { return n }; return nil }
-    var arrayValue: [LoopCareJSON]? { if case .array(let a) = self { return a }; return nil }
-    var objectValue: [String: LoopCareJSON]? { if case .object(let o) = self { return o }; return nil }
+    var arrayValue: [LoopSightJSON]? { if case .array(let a) = self { return a }; return nil }
+    var objectValue: [String: LoopSightJSON]? { if case .object(let o) = self { return o }; return nil }
 }

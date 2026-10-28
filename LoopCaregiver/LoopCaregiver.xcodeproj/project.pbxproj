@@ -24,7 +24,7 @@
 		A96929352926E5CE00B8BF43 /* HUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96929342926E5CE00B8BF43 /* HUDView.swift */; };
 		A969293B2926ECF500B8BF43 /* BottomBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A969293A2926ECF500B8BF43 /* BottomBarView.swift */; };
 		A96929412926EFEC00B8BF43 /* LooperSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A969293E2926EFEC00B8BF43 /* LooperSetupView.swift */; };
-		C0FEC0DE0000000000000001 /* LoopCareJoinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0FEC0DE0000000000000002 /* LoopCareJoinView.swift */; };
+		C0FEC0DE0000000000000001 /* LoopSightJoinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0FEC0DE0000000000000002 /* LoopSightJoinView.swift */; };
 		A970838F2B4D54CC0053D633 /* CustomDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A970838E2B4D54CC0053D633 /* CustomDatePicker.swift */; };
 		A97083912B4D55130053D633 /* OverrideViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97083902B4D55130053D633 /* OverrideViewModel.swift */; };
 		A97083932B4D55A00053D633 /* OverridePickerRowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97083922B4D55A00053D633 /* OverridePickerRowModel.swift */; };
@@ -200,7 +200,7 @@
 		A96929342926E5CE00B8BF43 /* HUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDView.swift; sourceTree = "<group>"; };
 		A969293A2926ECF500B8BF43 /* BottomBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomBarView.swift; sourceTree = "<group>"; };
 		A969293E2926EFEC00B8BF43 /* LooperSetupView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LooperSetupView.swift; sourceTree = "<group>"; };
-		C0FEC0DE0000000000000002 /* LoopCareJoinView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoopCareJoinView.swift; sourceTree = "<group>"; };
+		C0FEC0DE0000000000000002 /* LoopSightJoinView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoopSightJoinView.swift; sourceTree = "<group>"; };
 		A970838E2B4D54CC0053D633 /* CustomDatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDatePicker.swift; sourceTree = "<group>"; };
 		A97083902B4D55130053D633 /* OverrideViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverrideViewModel.swift; sourceTree = "<group>"; };
 		A97083922B4D55A00053D633 /* OverridePickerRowModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverridePickerRowModel.swift; sourceTree = "<group>"; };
@@ -437,7 +437,7 @@
 			isa = PBXGroup;
 			children = (
 				A969293E2926EFEC00B8BF43 /* LooperSetupView.swift */,
-				C0FEC0DE0000000000000002 /* LoopCareJoinView.swift */,
+				C0FEC0DE0000000000000002 /* LoopSightJoinView.swift */,
 				A9B033E729231DCE0052AA9E /* SettingsView.swift */,
 				A9ECCB272B286CD90057DEDF /* AppExpirationAlerter.swift */,
 			);
@@ -964,7 +964,7 @@
 				A9ECCB2A2B286DB50057DEDF /* UserDefaults+Extensions.swift in Sources */,
 				A98348912AD206CD0034ABB2 /* PresetRowView.swift in Sources */,
 				A96929412926EFEC00B8BF43 /* LooperSetupView.swift in Sources */,
-				C0FEC0DE0000000000000001 /* LoopCareJoinView.swift in Sources */,
+				C0FEC0DE0000000000000001 /* LoopSightJoinView.swift in Sources */,
 				A9EC197E291FEF940022D39F /* ContentView.swift in Sources */,
 				A9BAEE6C2B5C552D002C7C46 /* HomeView.swift in Sources */,
 				A90152942C321FF90067D123 /* PinchZoom.swift in Sources */,

@@ -2,8 +2,8 @@
 //  LooperBackendTestCase.swift
 //  LoopCaregiverKitTests
 //
-//  A Looper is followed through Nightscout or LoopCare. Loopers saved before
-//  LoopCare (Nightscout, Core Data model 2) must keep working unchanged.
+//  A Looper is followed through Nightscout or LoopSight. Loopers saved before
+//  LoopSight (Nightscout, Core Data model 2) must keep working unchanged.
 //
 
 import CoreData
@@ -12,7 +12,7 @@ import XCTest
 
 final class LooperBackendTestCase: XCTestCase {
     private let nightscout = NightscoutCredentials(url: URL(string: "https://ns.example.com")!, secretKey: "secret", otpURL: "otpauth://totp/x?secret=ABC")
-    private let loopCare = LoopCareCredentials(siteURL: URL(string: "https://care.example.com")!, circle: "c_abc", keyID: "k_123")
+    private let loopSight = LoopSightCredentials(siteURL: URL(string: "https://care.example.com")!, circle: "c_abc", keyID: "k_123")
 
     func testNightscoutLooperEncodesAsBefore() throws {
         let looper = Looper(identifier: UUID(), name: "Liz", nightscoutCredentials: nightscout, lastSelectedDate: Date(timeIntervalSince1970: 0))
@@ -22,27 +22,27 @@ final class LooperBackendTestCase: XCTestCase {
         let decoded = try JSONDecoder().decode(Looper.self, from: JSONEncoder().encode(looper))
         XCTAssertEqual(decoded.backend, .nightscout(nightscout))
         XCTAssertEqual(decoded.nightscoutCredentials, nightscout)
-        XCTAssertNil(decoded.loopCareCredentials)
+        XCTAssertNil(decoded.loopSightCredentials)
     }
 
-    func testLoopCareLooperRoundTrips() throws {
-        let looper = Looper(identifier: UUID(), name: "Sam", backend: .loopCare(loopCare), lastSelectedDate: Date())
+    func testLoopSightLooperRoundTrips() throws {
+        let looper = Looper(identifier: UUID(), name: "Sam", backend: .loopSight(loopSight), lastSelectedDate: Date())
         let decoded = try JSONDecoder().decode(Looper.self, from: JSONEncoder().encode(looper))
-        XCTAssertEqual(decoded.backend, .loopCare(loopCare))
+        XCTAssertEqual(decoded.backend, .loopSight(loopSight))
         XCTAssertNil(decoded.nightscoutCredentials)
-        XCTAssertTrue(looper.makeRemoteDataSource(settings: CaregiverSettings(userDefaults: UserDefaults(suiteName: UUID().uuidString)!, appGroupsSupported: false)) is LoopCareDataSource)
+        XCTAssertTrue(looper.makeRemoteDataSource(settings: CaregiverSettings(userDefaults: UserDefaults(suiteName: UUID().uuidString)!, appGroupsSupported: false)) is LoopSightDataSource)
     }
 
     func testBothKindsAreStored() throws {
         let service = CoreDataAccountService(containerFactory: InMemoryPersistentContainerFactory())
         try service.addLooper(Looper(identifier: UUID(), name: "Liz", nightscoutCredentials: nightscout, lastSelectedDate: Date()))
-        try service.addLooper(Looper(identifier: UUID(), name: "Sam", backend: .loopCare(loopCare), lastSelectedDate: Date()))
+        try service.addLooper(Looper(identifier: UUID(), name: "Sam", backend: .loopSight(loopSight), lastSelectedDate: Date()))
         let loopers = Dictionary(uniqueKeysWithValues: try service.getLoopers().map { ($0.name, $0) })
         XCTAssertEqual(loopers["Liz"]?.backend, .nightscout(nightscout))
-        XCTAssertEqual(loopers["Sam"]?.backend, .loopCare(loopCare))
+        XCTAssertEqual(loopers["Sam"]?.backend, .loopSight(loopSight))
     }
 
-    /// A store written by the app before LoopCare opens with the new model, its Loopers still Nightscout ones.
+    /// A store written by the app before LoopSight opens with the new model, its Loopers still Nightscout ones.
     func testStoreFromModelVersion2Migrates() throws {
         let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)

@@ -34,9 +34,9 @@ public class DeepLinkHandlerPhone: DeepLinkHandler {
             try await handleSelectLooperErrorDeepLink(selectLooperErrorDeepLink)
         case .requestWatchConfigurationDeepLink(let requestWatchConfigurationDeepLink):
             try await handleRequestWatchConfigurationDeepLink(requestWatchConfigurationDeepLink)
-        case .joinLoopCare(let deepLink):
+        case .joinLoopSight(let deepLink):
             // Joining asks the caregiver first: the app shows the invitation.
-            accountService.pendingLoopCareInvitation = deepLink.invitationLink
+            accountService.pendingLoopSightInvitation = deepLink.invitationLink
         }
     }
 
@@ -107,8 +107,8 @@ public class DeepLinkHandlerWatch: DeepLinkHandler {
             try await handleSelectLooperErrorDeepLink(selectLooperErrorDeepLink)
         case .requestWatchConfigurationDeepLink:
             preconditionFailure("Should not be received from iPhone")
-        case .joinLoopCare:
-            throw JoinLoopCareDeepLink.Error.phoneOnly
+        case .joinLoopSight:
+            throw JoinLoopSightDeepLink.Error.phoneOnly
         }
     }
 

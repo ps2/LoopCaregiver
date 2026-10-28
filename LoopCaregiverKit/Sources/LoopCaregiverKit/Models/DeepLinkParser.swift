@@ -29,9 +29,9 @@ public class DeepLinkParser {
             } else if action == SelectLooperErrorDeepLink.actionName {
                 let deepLink = try SelectLooperErrorDeepLink(pathParts: pathComponents, queryParameters: queryParameters)
                 return .selectLooperError(deepLink: deepLink)
-            } else if action == JoinLoopCareDeepLink.actionName {
-                let deepLink = try JoinLoopCareDeepLink(pathParts: pathComponents, queryParameters: queryParameters)
-                return .joinLoopCare(deepLink: deepLink)
+            } else if action == JoinLoopSightDeepLink.actionName || action == JoinLoopSightDeepLink.legacyActionName {
+                let deepLink = try JoinLoopSightDeepLink(pathParts: pathComponents, queryParameters: queryParameters)
+                return .joinLoopSight(deepLink: deepLink)
             } else if action == RequestWatchConfigurationDeepLink.actionName {
                 let deepLink = try RequestWatchConfigurationDeepLink(pathParts: pathComponents, queryParameters: queryParameters)
                 return .requestWatchConfigurationDeepLink(deepLink: deepLink)
@@ -74,7 +74,7 @@ public enum DeepLinkAction {
     case selectLooperError(deepLink: SelectLooperErrorDeepLink)
     case addLooper(deepLink: CreateLooperDeepLink)
     case requestWatchConfigurationDeepLink(deepLink: RequestWatchConfigurationDeepLink)
-    case joinLoopCare(deepLink: JoinLoopCareDeepLink)
+    case joinLoopSight(deepLink: JoinLoopSightDeepLink)
 }
 
 public protocol DeepLink {
@@ -216,7 +216,7 @@ public struct CreateLooperDeepLink: DeepLink {
     }
     
     public static func deepLinkWithLooper(_ looper: Looper) throws -> CreateLooperDeepLink {
-        // The watch is set up with a Nightscout Looper's link; LoopCare Loopers don't reach the watch yet.
+        // The watch is set up with a Nightscout Looper's link; LoopSight Loopers don't reach the watch yet.
         guard let credentials = looper.nightscoutCredentials else {
             throw CreateLooperDeepLinkError.missingNSURL
         }

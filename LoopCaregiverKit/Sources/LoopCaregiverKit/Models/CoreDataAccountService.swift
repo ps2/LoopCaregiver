@@ -34,7 +34,8 @@ class CoreDataAccountService: AccountService {
             looperCD.nightscoutURL = credentials.url.absoluteString
             looperCD.nightscoutAPISecret = credentials.secretKey
             looperCD.otpURL = credentials.otpURL
-        case .loopCare(let credentials):
+        case .loopSight(let credentials):
+            // Model 3 keeps its pre-rename attribute names.
             looperCD.loopCareSiteURL = credentials.siteURL.absoluteString
             looperCD.loopCareCircle = credentials.circle
             looperCD.loopCareKeyID = credentials.keyID
@@ -259,10 +260,10 @@ extension LooperCD {
         guard let identifier, let name, let lastSelectedDate else {
             return nil
         }
-        // A LoopCare Looper (model version 3 on); every Looper before then is a Nightscout one.
+        // A LoopSight Looper (model version 3 on); every Looper before then is a Nightscout one.
         if let loopCareSiteURL, let siteURL = URL(string: loopCareSiteURL), let loopCareCircle, let loopCareKeyID {
-            let credentials = LoopCareCredentials(siteURL: siteURL, circle: loopCareCircle, keyID: loopCareKeyID)
-            return Looper(identifier: identifier, name: name, backend: .loopCare(credentials), lastSelectedDate: lastSelectedDate)
+            let credentials = LoopSightCredentials(siteURL: siteURL, circle: loopCareCircle, keyID: loopCareKeyID)
+            return Looper(identifier: identifier, name: name, backend: .loopSight(credentials), lastSelectedDate: lastSelectedDate)
         }
         guard let nightscoutURL,
               let nightscoutAPISecret,

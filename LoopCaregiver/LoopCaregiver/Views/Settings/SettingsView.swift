@@ -137,11 +137,11 @@ struct SettingsView: View {
                     Text("Nightscout")
                 }
                 OTPCodeRow(credentialService: nightscoutCredentialService)
-            } else if let loopCare = looperService.looper.loopCareCredentials {
+            } else if let loopSight = looperService.looper.loopSightCredentials {
                 LabeledContent {
-                    Text(settings.demoModeEnabled ? "https://www.YourLoopersURL.com" : loopCare.siteURL.absoluteString)
+                    Text(settings.demoModeEnabled ? "https://www.YourLoopersURL.com" : loopSight.siteURL.absoluteString)
                 } label: {
-                    Text("LoopCare")
+                    Text("LoopSight")
                 }
             }
             Button(role: .destructive) {

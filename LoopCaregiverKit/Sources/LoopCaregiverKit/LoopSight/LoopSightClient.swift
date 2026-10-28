@@ -1,8 +1,8 @@
 //
-//  LoopCareClient.swift
+//  LoopSightClient.swift
 //  LoopCaregiverKit
 //
-//  Talking to a LoopCare node as a caregiver: opening and accepting an
+//  Talking to a LoopSight node as a caregiver: opening and accepting an
 //  invitation, and requests signed with the caregiver's key (x-lc-key,
 //  x-lc-time, x-lc-sig), so no password or session is ever stored.
 //
@@ -10,7 +10,7 @@
 import Foundation
 
 /// An invitation link from Loop: https://<site>/i/<inviteID>#<secret>. The secret after # never reaches the site.
-public struct LoopCareInvitationLink: Equatable, Identifiable {
+public struct LoopSightInvitationLink: Equatable, Identifiable {
     public var id: String { inviteID }
     public let siteURL: URL
     public let inviteID: String
@@ -37,8 +37,8 @@ public struct LoopCareInvitationLink: Equatable, Identifiable {
 }
 
 /// What the invitation offers, as the site describes it.
-public struct LoopCareInvitation {
-    public let link: LoopCareInvitationLink
+public struct LoopSightInvitation {
+    public let link: LoopSightInvitationLink
     public let circle: String
     /// The child's name in the circle, if Loop gave one.
     public let name: String?
@@ -56,19 +56,19 @@ public struct LoopCareInvitation {
     public let areas: [String: String]
 }
 
-public enum LoopCareClientError: LocalizedError {
+public enum LoopSightClientError: LocalizedError {
     case invalidLink
     case badResponse(Int, String)
 
     public var errorDescription: String? {
         switch self {
-        case .invalidLink: return "That isn't a LoopCare invitation link. It looks like https://…/i/…#…"
-        case .badResponse(_, let message): return message.isEmpty ? "The LoopCare site didn't accept that." : message
+        case .invalidLink: return "That isn't a LoopSight invitation link. It looks like https://…/i/…#…"
+        case .badResponse(_, let message): return message.isEmpty ? "The LoopSight site didn't accept that." : message
         }
     }
 }
 
-public struct LoopCareClient {
+public struct LoopSightClient {
     public let key: CaregiverKey
     private let session: URLSession
 
@@ -78,13 +78,13 @@ public struct LoopCareClient {
     }
 
     /// Opens an invitation: what it offers, and whether it's still open.
-    public func open(_ link: LoopCareInvitationLink) async throws -> LoopCareInvitation {
+    public func open(_ link: LoopSightInvitationLink) async throws -> LoopSightInvitation {
         let info = try await send(base: link.siteURL, method: "GET", path: "/v1/invites/\(link.inviteID)", body: nil, headers: ["x-lc-invite-secret": link.secret], signed: false)
-        guard let circle = info["circle"]?.stringValue else { throw LoopCareClientError.badResponse(200, "The invitation is missing its circle.") }
+        guard let circle = info["circle"]?.stringValue else { throw LoopSightClientError.badResponse(200, "The invitation is missing its circle.") }
         let offered = info["offered"]
         var areas: [String: String] = [:]
         for (area, level) in offered?["areas"]?.objectValue ?? [:] { areas[area] = level.stringValue }
-        return LoopCareInvitation(
+        return LoopSightInvitation(
             link: link, circle: circle, name: info["name"]?.stringValue,
             nickname: info["nickname"]?.stringValue ?? "Caregiver", relationship: info["relationship"]?.stringValue,
             status: info["status"]?.stringValue ?? "pending",
@@ -93,27 +93,27 @@ public struct LoopCareClient {
     }
 
     /// Accepts with this caregiver's key. Loop then has to confirm them before they see anything.
-    public func accept(_ invitation: LoopCareInvitation, now: Date = Date()) async throws {
+    public func accept(_ invitation: LoopSightInvitation, now: Date = Date()) async throws {
         let link = invitation.link
         let k = "\(invitation.circle)/invite/\(link.inviteID)/acceptance"
         let event = try key.sign(event: [
             "id": .string("\(k)@\(key.keyID)"), "circle": .string(invitation.circle), "type": "invite.accepted", "key": .string(k), "version": 1,
-            "at": .string(LoopCareSigning.isoString(now)),
+            "at": .string(LoopSightSigning.isoString(now)),
             "data": [
                 "inviteId": .string(link.inviteID), "keyId": .string(key.keyID), "publicKey": key.publicJWK,
-                "secretProof": .string(LoopCareSigning.acceptanceProof(secret: link.secret, inviteID: link.inviteID, keyID: key.keyID)),
+                "secretProof": .string(LoopSightSigning.acceptanceProof(secret: link.secret, inviteID: link.inviteID, keyID: key.keyID)),
             ],
         ])
         _ = try await send(base: link.siteURL, method: "POST", path: "/v1/invites/\(link.inviteID)/accept", body: ["secret": .string(link.secret), "event": event], signed: false)
     }
 
     /// A request as this caregiver, signed with their key.
-    public func request(base: URL, method: String, path: String, body: LoopCareJSON? = nil) async throws -> LoopCareJSON {
+    public func request(base: URL, method: String, path: String, body: LoopSightJSON? = nil) async throws -> LoopSightJSON {
         try await send(base: base, method: method, path: path, body: body, signed: true)
     }
 
-    private func send(base: URL, method: String, path: String, body: LoopCareJSON?, headers: [String: String] = [:], signed: Bool) async throws -> LoopCareJSON {
-        guard let url = URL(string: path, relativeTo: base) else { throw LoopCareClientError.invalidLink }
+    private func send(base: URL, method: String, path: String, body: LoopSightJSON?, headers: [String: String] = [:], signed: Bool) async throws -> LoopSightJSON {
+        guard let url = URL(string: path, relativeTo: base) else { throw LoopSightClientError.invalidLink }
         let data = body?.canonicalData ?? Data()
         var req = URLRequest(url: url)
         req.httpMethod = method
@@ -123,7 +123,7 @@ public struct LoopCareClient {
             let time = String(Int64(Date().timeIntervalSince1970 * 1000))
             req.setValue(key.keyID, forHTTPHeaderField: "x-lc-key")
             req.setValue(time, forHTTPHeaderField: "x-lc-time")
-            req.setValue(try key.sign(Data(LoopCareSigning.signingString(method: method, pathAndQuery: path, time: time, body: data).utf8)), forHTTPHeaderField: "x-lc-sig")
+            req.setValue(try key.sign(Data(LoopSightSigning.signingString(method: method, pathAndQuery: path, time: time, body: data).utf8)), forHTTPHeaderField: "x-lc-sig")
         }
         if body != nil {
             req.httpBody = data
@@ -131,9 +131,9 @@ public struct LoopCareClient {
         }
         let (respData, response) = try await session.data(for: req)
         let status = (response as? HTTPURLResponse)?.statusCode ?? 0
-        let json = (try? LoopCareJSON.parse(respData)) ?? .null
+        let json = (try? LoopSightJSON.parse(respData)) ?? .null
         guard (200..<300).contains(status) else {
-            throw LoopCareClientError.badResponse(status, json["error"]?.stringValue ?? "")
+            throw LoopSightClientError.badResponse(status, json["error"]?.stringValue ?? "")
         }
         return json
     }

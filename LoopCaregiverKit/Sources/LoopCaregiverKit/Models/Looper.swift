@@ -31,16 +31,18 @@ public class Looper: ObservableObject, Hashable, Codable, Identifiable {
         return nil
     }
 
-    /// The LoopCare circle, for a Looper followed through LoopCare.
-    public var loopCareCredentials: LoopCareCredentials? {
-        if case .loopCare(let credentials) = backend { return credentials }
+    /// The LoopSight circle, for a Looper followed through LoopSight.
+    public var loopSightCredentials: LoopSightCredentials? {
+        if case .loopSight(let credentials) = backend { return credentials }
         return nil
     }
 
-    // MARK: Codable (a Nightscout Looper encodes as before LoopCare)
+    // MARK: Codable (a Nightscout Looper encodes as before LoopSight)
 
     private enum CodingKeys: String, CodingKey {
-        case identifier, name, lastSelectedDate, nightscoutCredentials, loopCareCredentials
+        case identifier, name, lastSelectedDate, nightscoutCredentials
+        // The pre-rename key, as stored and sent to the watch.
+        case loopSightCredentials = "loopCareCredentials"
     }
 
     public required init(from decoder: Decoder) throws {
@@ -48,8 +50,8 @@ public class Looper: ObservableObject, Hashable, Codable, Identifiable {
         identifier = try container.decode(UUID.self, forKey: .identifier)
         name = try container.decode(String.self, forKey: .name)
         lastSelectedDate = try container.decode(Date.self, forKey: .lastSelectedDate)
-        if let loopCare = try container.decodeIfPresent(LoopCareCredentials.self, forKey: .loopCareCredentials) {
-            backend = .loopCare(loopCare)
+        if let loopSight = try container.decodeIfPresent(LoopSightCredentials.self, forKey: .loopSightCredentials) {
+            backend = .loopSight(loopSight)
         } else {
             backend = .nightscout(try container.decode(NightscoutCredentials.self, forKey: .nightscoutCredentials))
         }
@@ -62,7 +64,7 @@ public class Looper: ObservableObject, Hashable, Codable, Identifiable {
         try container.encode(lastSelectedDate, forKey: .lastSelectedDate)
         switch backend {
         case .nightscout(let credentials): try container.encode(credentials, forKey: .nightscoutCredentials)
-        case .loopCare(let credentials): try container.encode(credentials, forKey: .loopCareCredentials)
+        case .loopSight(let credentials): try container.encode(credentials, forKey: .loopSightCredentials)
         }
     }
 
@@ -93,13 +95,13 @@ public class Looper: ObservableObject, Hashable, Codable, Identifiable {
 public enum LooperBackend: Codable, Hashable {
     /// The Looper's Nightscout site: data, and commands with Loop's one-time password.
     case nightscout(NightscoutCredentials)
-    /// A child in a LoopCare circle: data, signed commands, alerts and the people caring for them.
-    case loopCare(LoopCareCredentials)
+    /// A child in a LoopSight circle: data, signed commands, alerts and the people caring for them.
+    case loopSight(LoopSightCredentials)
 }
 
-/// A caregiver's membership in a LoopCare circle. The caregiver's private key stays in the Keychain, under `keyID`.
-public struct LoopCareCredentials: Codable, Hashable {
-    /// The LoopCare node this app talks to first.
+/// A caregiver's membership in a LoopSight circle. The caregiver's private key stays in the Keychain, under `keyID`.
+public struct LoopSightCredentials: Codable, Hashable {
+    /// The LoopSight node this app talks to first.
     public let siteURL: URL
     /// The circle: one child's Loop.
     public let circle: String

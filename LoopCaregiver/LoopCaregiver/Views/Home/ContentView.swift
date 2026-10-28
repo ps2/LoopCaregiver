@@ -40,16 +40,16 @@ struct ContentView: View {
             }
         })
         // An invitation Loop shared opened the app: show it, and join only if the caregiver says so.
-        .sheet(item: $accountService.pendingLoopCareInvitation) { link in
+        .sheet(item: $accountService.pendingLoopSightInvitation) { link in
             NavigationStack {
-                LoopCareJoinView(accountService: accountService, initialLink: link) {
-                    accountService.pendingLoopCareInvitation = nil
+                LoopSightJoinView(accountService: accountService, initialLink: link) {
+                    accountService.pendingLoopSightInvitation = nil
                 }
-                .navigationTitle("LoopCare Invitation")
+                .navigationTitle("LoopSight Invitation")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
-                        Button("Cancel") { accountService.pendingLoopCareInvitation = nil }
+                        Button("Cancel") { accountService.pendingLoopSightInvitation = nil }
                     }
                 }
             }

@@ -22,11 +22,11 @@ struct LooperSetupView: View {
     @State private var isShowingScanner = false
     @State private var authenticating = false
     @Binding var path: NavigationPath
-    @State private var kind: Kind = .loopCare
+    @State private var kind: Kind = .loopSight
 
-    /// How the Looper is followed: LoopCare (an invitation from Loop) or their Nightscout site.
+    /// How the Looper is followed: LoopSight (an invitation from Loop) or their Nightscout site.
     enum Kind: String, CaseIterable, Identifiable {
-        case loopCare = "LoopCare"
+        case loopSight = "LoopSight"
         case nightscout = "Nightscout"
         var id: String { rawValue }
     }
@@ -39,8 +39,8 @@ struct LooperSetupView: View {
             .pickerStyle(.segmented)
             .padding(.horizontal)
             switch kind {
-            case .loopCare:
-                LoopCareJoinView(accountService: accountService) {
+            case .loopSight:
+                LoopSightJoinView(accountService: accountService) {
                     if !path.isEmpty { path.removeLast() }
                 }
             case .nightscout:

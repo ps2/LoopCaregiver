@@ -1,8 +1,8 @@
 //
-//  LoopCareJoinView.swift
+//  LoopSightJoinView.swift
 //  LoopCaregiver
 //
-//  Join a child's LoopCare circle with the invitation link Loop shared:
+//  Join a child's LoopSight circle with the invitation link Loop shared:
 //  paste or scan it, see what it offers, and accept.
 //
 
@@ -10,14 +10,14 @@ import CodeScanner
 import LoopCaregiverKit
 import SwiftUI
 
-struct LoopCareJoinView: View {
+struct LoopSightJoinView: View {
     @ObservedObject var accountService: AccountServiceManager
     /// An invitation that opened the app; it's opened at once.
-    var initialLink: LoopCareInvitationLink?
+    var initialLink: LoopSightInvitationLink?
     /// After joining.
     var onJoined: () -> Void
     @State private var linkText = ""
-    @State private var invitation: LoopCareInvitation?
+    @State private var invitation: LoopSightInvitation?
     @State private var nameText = ""
     @State private var errorText: String?
     @State private var working = false
@@ -39,7 +39,7 @@ struct LoopCareJoinView: View {
                         .buttonStyle(.borderedProminent)
                         .controlSize(.large)
                     } footer: {
-                        Text("Loop invites you: on the Looper's phone, Settings → Services → LoopCare → Invite. Scan the code it shows, or open the link it sends you.")
+                        Text("Loop invites you: on the Looper's phone, Settings → Services → LoopSight → Invite. Scan the code it shows, or open the link it sends you.")
                     }
                     Section {
                         TextField("https://…/i/…#…", text: $linkText)
@@ -82,7 +82,7 @@ struct LoopCareJoinView: View {
             }
         }
         .onChange(of: linkText) { _ in
-            if invitation != nil && invitation?.link != LoopCareInvitationLink(anyLink: linkText) { invitation = nil }
+            if invitation != nil && invitation?.link != LoopSightInvitationLink(anyLink: linkText) { invitation = nil }
         }
         .onAppear {
             if let initialLink, linkText.isEmpty {
@@ -92,7 +92,7 @@ struct LoopCareJoinView: View {
         }
     }
 
-    private func offerSection(_ invitation: LoopCareInvitation) -> some View {
+    private func offerSection(_ invitation: LoopSightInvitation) -> some View {
         Section {
             TextField("Name", text: $nameText)
             LabeledContent("You", value: invitation.nickname)
@@ -113,12 +113,12 @@ struct LoopCareJoinView: View {
     }
 
     private func open() {
-        guard let link = LoopCareInvitationLink(anyLink: linkText) else {
-            errorText = LoopCareClientError.invalidLink.localizedDescription
+        guard let link = LoopSightInvitationLink(anyLink: linkText) else {
+            errorText = LoopSightClientError.invalidLink.localizedDescription
             return
         }
         run {
-            let opened = try await LoopCareClient(key: try CaregiverKeyStore.loadOrCreate()).open(link)
+            let opened = try await LoopSightClient(key: try CaregiverKeyStore.loadOrCreate()).open(link)
             invitation = opened
             if nameText.isEmpty { nameText = opened.name ?? "" }
         }
